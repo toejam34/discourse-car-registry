@@ -1,0 +1,13 @@
+plugins:
+  car_registry_enabled:
+    default: true
+    client: true
+    description: "Enable the Car Registry directory plugin"
+  car_registry_allow_all_users_to_add:
+    default: true
+    client: true
+    description: "Allow registered members to add their own cars to the registry"
+  car_registry_title:
+    default: "Car Registry"
+    client: true
+    description: "Title displayed on the Car Registry page"

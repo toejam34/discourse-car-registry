@@ -1,0 +1,140 @@
+// ==========================================================================
+// Car Registry Stylesheet - Light & Dark Native
+// ==========================================================================
+
+.car-registry-container {
+  max-width: 100%;
+  margin: 1.5rem auto 3rem auto;
+
+  .car-registry-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .car-registry-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+  }
+
+  .car-registry-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    background-color: light-dark(#f6f8fa, rgba(255, 255, 255, 0.04));
+    border: 1px solid light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08));
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    align-items: center;
+
+    .filter-input {
+      min-width: 220px;
+      flex: 1;
+    }
+
+    select, input {
+      height: 38px;
+      border-radius: 6px;
+      padding: 0 10px;
+    }
+  }
+
+  .car-registry-table-wrapper {
+    overflow-x: auto;
+    border-radius: 8px;
+    border: 1px solid light-dark(rgba(0, 0, 0, 0.09), rgba(255, 255, 255, 0.08));
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+
+    table.car-registry-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.93rem;
+
+      thead th {
+        background-color: light-dark(#e2e7ec, rgba(255, 255, 255, 0.07));
+        color: var(--primary);
+        font-weight: 700;
+        text-align: left;
+        padding: 12px 14px;
+        white-space: nowrap;
+        border-bottom: 2px solid light-dark(rgba(0, 0, 0, 0.1), rgba(255, 255, 255, 0.08));
+      }
+
+      tbody tr {
+        border-bottom: 1px solid light-dark(rgba(0, 0, 0, 0.07), rgba(255, 255, 255, 0.06));
+        transition: background-color 0.15s ease;
+
+        &:nth-child(even) {
+          background-color: light-dark(#f8fafc, rgba(255, 255, 255, 0.02));
+        }
+
+        &:nth-child(odd) {
+          background-color: light-dark(#ffffff, transparent);
+        }
+
+        &:hover {
+          background-color: light-dark(#eaf1fa, rgba(255, 255, 255, 0.08));
+        }
+
+        td {
+          padding: 12px 14px;
+          vertical-align: middle;
+          color: var(--primary);
+
+          &.member-col {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+
+            .avatar {
+              width: 28px;
+              height: 28px;
+              border-radius: 50%;
+            }
+          }
+
+          &.plaque-col {
+            font-weight: 700;
+            color: var(--tertiary);
+          }
+
+          &.reg-col {
+            font-family: var(--d-font-family--monospace, monospace);
+            font-weight: 600;
+            background: light-dark(#fef08a, #854d0e);
+            color: light-dark(#713f12, #fef9c3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            display: inline-block;
+          }
+
+          &.notes-col {
+            max-width: 250px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--primary-high);
+          }
+        }
+      }
+    }
+  }
+
+  .car-registry-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--primary-medium);
+  }
+}
