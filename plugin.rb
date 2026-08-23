@@ -2,9 +2,9 @@
 
 # name: discourse-car-registry
 # about: Vehicle and Car Registry directory for TurboRenault Discourse
-# version: 1.0.0
+# version: 1.0.1
 # authors: TurboRenault / Antigravity
-# url: https://github.com/turborenault/discourse-car-registry
+# url: https://github.com/toejam34/discourse-car-registry
 # required_version: 2.7.0
 
 enabled_site_setting :car_registry_enabled
@@ -45,8 +45,10 @@ after_initialize do
     end
   end
 
-  Discourse::Application.routes.append do
+  Discourse::Application.routes.prepend do
     mount ::CarRegistry::Engine, at: '/cars'
+    get '/cars' => 'car_registry/cars#index'
+    get '/cars/meta' => 'car_registry/cars#meta'
   end
 
   add_to_serializer(:user_card, :cars_count) do

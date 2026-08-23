@@ -9,7 +9,7 @@ module CarRegistry
     def index
       respond_to do |format|
         format.html do
-          render 'default/empty'
+          render html: "", layout: true
         end
 
         format.json do
