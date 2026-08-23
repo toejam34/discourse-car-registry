@@ -34,11 +34,11 @@ class CarRegistryEntrySerializer < ApplicationSerializer
   end
 
   def car_reg_date_formatted
-    object.car_reg_date&.strftime('%b %-d, %Y')
+    object.car_reg_date&.strftime("%b %-d, %Y")
   end
 
   def can_edit
     return false unless scope&.user
-    scope.is_admin? || (object.user_id == scope.user.id)
+    scope.user.admin? || (object.user_id.present? && object.user_id == scope.user.id)
   end
 end

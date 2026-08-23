@@ -9,28 +9,28 @@ module CarRegistry
     def index
       respond_to do |format|
         format.html do
-          render html: "", layout: true
+          render html: "", layout: "application"
         end
 
         format.json do
           entries = CarRegistryEntry.includes(:user, :car_model, :car_location)
 
-          if params[:model_id].present? && params[:model_id] != '0'
+          if params[:model_id].present? && params[:model_id] != "0"
             entries = entries.where(model_id: params[:model_id].to_i)
           end
 
-          if params[:location_id].present? && params[:location_id] != '0'
+          if params[:location_id].present? && params[:location_id] != "0"
             entries = entries.where(location_id: params[:location_id].to_i)
           end
 
           if params[:colour].present?
-            entries = entries.where('LOWER(colour) LIKE ?', "%#{params[:colour].downcase}%")
+            entries = entries.where("LOWER(colour) LIKE ?", "%#{params[:colour].downcase}%")
           end
 
           if params[:q].present?
             query = "%#{params[:q].downcase}%"
             entries = entries.where(
-              'LOWER(username) LIKE :q OR LOWER(reg_number) LIKE :q OR LOWER(plaque_number) LIKE :q OR LOWER(forum_name) LIKE :q OR LOWER(unique_information) LIKE :q',
+              "LOWER(username) LIKE :q OR LOWER(reg_number) LIKE :q OR LOWER(plaque_number) LIKE :q OR LOWER(forum_name) LIKE :q OR LOWER(unique_information) LIKE :q",
               q: query
             )
           end
@@ -56,7 +56,7 @@ module CarRegistry
     def meta
       models = CarModel.all
       locations = CarLocation.all
-      colours = CarRegistryEntry.where.not(colour: [nil, '']).pluck(:colour).uniq.sort
+      colours = CarRegistryEntry.where.not(colour: [nil, ""]).pluck(:colour).uniq.compact.sort
 
       render_json_dump(
         models: serialize_data(models, CarModelSerializer),
@@ -79,7 +79,7 @@ module CarRegistry
 
     def update
       entry = CarRegistryEntry.find(params[:id])
-      raise Discourse::InvalidAccess unless guardian.is_admin? || (entry.user_id == current_user.id)
+      raise Discourse::InvalidAccess unless current_user&.admin? || (entry.user_id == current_user.id)
 
       if entry.update(car_params)
         render_serialized(entry, CarRegistryEntrySerializer)
@@ -90,7 +90,7 @@ module CarRegistry
 
     def destroy
       entry = CarRegistryEntry.find(params[:id])
-      raise Discourse::InvalidAccess unless guardian.is_admin? || (entry.user_id == current_user.id)
+      raise Discourse::InvalidAccess unless current_user&.admin? || (entry.user_id == current_user.id)
 
       entry.destroy!
       render json: success_json
