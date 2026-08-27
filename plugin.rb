@@ -31,16 +31,11 @@ after_initialize do
   require_relative 'app/controllers/car_registry/admin/locations_controller'
 
   Discourse::Application.routes.prepend do
-    get '/cars' => 'car_registry/cars#index'
-    get '/cars.json' => 'car_registry/cars#index'
-    get '/cars/meta' => 'car_registry/cars#meta'
-    get '/cars/meta.json' => 'car_registry/cars#meta'
-    post '/cars' => 'car_registry/cars#create'
-    post '/cars.json' => 'car_registry/cars#create'
-    put '/cars/:id' => 'car_registry/cars#update'
-    put '/cars/:id.json' => 'car_registry/cars#update'
-    delete '/cars/:id' => 'car_registry/cars#destroy'
-    delete '/cars/:id.json' => 'car_registry/cars#destroy'
+    get '/cars(.:format)' => 'car_registry/cars#index'
+    get '/cars/meta(.:format)' => 'car_registry/cars#meta'
+    post '/cars(.:format)' => 'car_registry/cars#create'
+    put '/cars/:id(.:format)' => 'car_registry/cars#update'
+    delete '/cars/:id(.:format)' => 'car_registry/cars#destroy'
 
     scope '/admin/cars', as: 'admin_cars' do
       resources :models, controller: 'car_registry/admin/models'
