@@ -1,5 +1,3 @@
 # frozen_string_literal: true
 
-class CarLocationSerializer < ApplicationSerializer
-  attributes :id, :name, :position
-end
+# Serializer defined in car_registry_entry_serializer.rb under CarRegistry namespace

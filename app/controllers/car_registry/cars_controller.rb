@@ -38,7 +38,7 @@ module ::CarRegistry
 
             total_count = entries.count
             page = [params[:page].to_i, 1].max
-            per_page = [params[:per_page].to_i, 50].clamp(10, 100)
+            per_page = (params[:per_page].presence || 50).to_i.clamp(10, 100)
 
             entries = entries.order(updated_at: :desc).offset((page - 1) * per_page).limit(per_page)
 

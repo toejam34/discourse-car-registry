@@ -2,7 +2,7 @@
 
 # name: discourse-car-registry
 # about: Vehicle and Car Registry directory for TurboRenault Discourse
-# version: 1.0.1
+# version: 1.0.2
 # authors: TurboRenault / Antigravity
 # url: https://github.com/toejam34/discourse-car-registry
 # required_version: 2.7.0
@@ -25,8 +25,6 @@ after_initialize do
   require_relative 'app/models/car_model'
   require_relative 'app/models/car_location'
   require_relative 'app/models/car_registry_entry'
-  require_relative 'app/serializers/car_model_serializer'
-  require_relative 'app/serializers/car_location_serializer'
   require_relative 'app/serializers/car_registry_entry_serializer'
   require_relative 'app/controllers/car_registry/cars_controller'
   require_relative 'app/controllers/car_registry/admin/models_controller'
@@ -47,11 +45,9 @@ after_initialize do
 
   Discourse::Application.routes.prepend do
     mount ::CarRegistry::Engine, at: '/cars'
-    get '/cars' => 'car_registry/cars#index'
-    get '/cars/meta' => 'car_registry/cars#meta'
   end
 
   add_to_serializer(:user_card, :cars_count) do
-    CarRegistryEntry.where(user_id: object.id).count
+    ::CarRegistry::CarRegistryEntry.where(user_id: object.id).count
   end
 end
