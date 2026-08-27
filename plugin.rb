@@ -30,21 +30,22 @@ after_initialize do
   require_relative 'app/controllers/car_registry/admin/models_controller'
   require_relative 'app/controllers/car_registry/admin/locations_controller'
 
-  CarRegistry::Engine.routes.draw do
-    get '/' => 'cars#index'
-    get '/meta' => 'cars#meta'
-    post '/' => 'cars#create'
-    put '/:id' => 'cars#update'
-    delete '/:id' => 'cars#destroy'
-
-    scope '/admin', as: 'admin' do
-      resources :models, only: [:index, :create, :update, :destroy]
-      resources :locations, only: [:index, :create, :update, :destroy]
-    end
-  end
-
   Discourse::Application.routes.prepend do
-    mount ::CarRegistry::Engine, at: '/cars'
+    get '/cars' => 'car_registry/cars#index'
+    get '/cars.json' => 'car_registry/cars#index'
+    get '/cars/meta' => 'car_registry/cars#meta'
+    get '/cars/meta.json' => 'car_registry/cars#meta'
+    post '/cars' => 'car_registry/cars#create'
+    post '/cars.json' => 'car_registry/cars#create'
+    put '/cars/:id' => 'car_registry/cars#update'
+    put '/cars/:id.json' => 'car_registry/cars#update'
+    delete '/cars/:id' => 'car_registry/cars#destroy'
+    delete '/cars/:id.json' => 'car_registry/cars#destroy'
+
+    scope '/admin/cars', as: 'admin_cars' do
+      resources :models, controller: 'car_registry/admin/models'
+      resources :locations, controller: 'car_registry/admin/locations'
+    end
   end
 
   add_to_serializer(:user_card, :cars_count) do
