@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 # name: discourse-car-registry
-# about: Vehicle and Car Registry directory for TurboRenault Discourse
-# version: 1.0.2
+# about: Vehicle and Car Registry directory for Discourse
+# version: 1.0.3
 # authors: TurboRenault / Antigravity
 # url: https://github.com/toejam34/discourse-car-registry
 # required_version: 2.7.0
@@ -25,12 +25,14 @@ after_initialize do
   require_relative 'app/models/car_model'
   require_relative 'app/models/car_location'
   require_relative 'app/models/car_registry_entry'
+  require_relative 'app/serializers/car_location_serializer'
+  require_relative 'app/serializers/car_model_serializer'
   require_relative 'app/serializers/car_registry_entry_serializer'
   require_relative 'app/controllers/car_registry/cars_controller'
   require_relative 'app/controllers/car_registry/admin/models_controller'
   require_relative 'app/controllers/car_registry/admin/locations_controller'
 
-  Discourse::Application.routes.prepend do
+  Discourse::Application.routes.append do
     get '/cars(.:format)' => 'car_registry/cars#index'
     get '/cars/meta(.:format)' => 'car_registry/cars#meta'
     post '/cars(.:format)' => 'car_registry/cars#create'
