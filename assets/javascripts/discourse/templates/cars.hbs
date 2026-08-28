@@ -117,12 +117,12 @@
     <DButton
       @icon="chevron-left"
       @action={{this.previousPage}}
-      @disabled={{eq this.page 1}}
+      @disabled={{eq (or this.page 1) 1}}
       class="btn-default"
     />
 
     <span class="page-indicator">
-      Page {{this.page}} {{#if this.totalPages}}of {{this.totalPages}}{{/if}}
+      Page {{or this.page 1}} of {{this.totalPages}}
     </span>
 
     <DButton
