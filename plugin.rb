@@ -25,7 +25,7 @@ after_initialize do
   require_relative "app/controllers/car_registry/admin/models_controller"
   require_relative "app/controllers/car_registry/admin/locations_controller"
 
-  Discourse::Application.routes.draw do
+  Discourse::Application.routes.append do
     get "/cars" => "car_registry/cars#index"
     get "/cars/meta" => "car_registry/cars#meta"
     post "/cars" => "car_registry/cars#create"
