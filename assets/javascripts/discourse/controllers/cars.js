@@ -9,9 +9,38 @@ export default class CarsController extends Controller {
   @service router;
   @service modal;
 
+  queryParams = ["page", "model_id", "location_id", "q"];
+
+  @tracked page = 1;
   @tracked searchTerm = "";
   @tracked selectedModelId = 0;
   @tracked selectedLocationId = 0;
+
+  get totalPages() {
+    return this.model?.meta?.total_pages || 1;
+  }
+
+  get isLastPage() {
+    return this.page >= this.totalPages;
+  }
+
+  @action
+  previousPage() {
+    if (this.page > 1) {
+      this.router.transitionTo("cars", {
+        queryParams: { page: this.page - 1 }
+      });
+    }
+  }
+
+  @action
+  nextPage() {
+    if (!this.isLastPage) {
+      this.router.transitionTo("cars", {
+        queryParams: { page: this.page + 1 }
+      });
+    }
+  }
 
   @action
   onSearch(event) {
