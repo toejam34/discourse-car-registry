@@ -26,22 +26,69 @@ export default class CarsRoute extends Route {
   @action
   onSearchInput(event) {
     this.searchTermValue = event.target.value;
-    debounce(this, this.performRouteTransition, 400);
+    debounce(this, this.performRouteTransition, { searchTerm: this.searchTermValue, page: 1 }, 400);
   }
 
-  performRouteTransition() {
+  @action
+  onModelChange(event) {
     this.router.transitionTo({
       queryParams: {
-        searchTerm: this.searchTermValue,
+        selectedModelId: event.target.value,
         page: 1
       }
+    });
+  }
+
+  @action
+  onLocationChange(event) {
+    this.router.transitionTo({
+      queryParams: {
+        selectedLocationId: event.target.value,
+        page: 1
+      }
+    });
+  }
+
+  @action
+  resetFilters() {
+    this.searchTermValue = "";
+    this.router.transitionTo({
+      queryParams: {
+        searchTerm: "",
+        selectedModelId: null,
+        selectedLocationId: null,
+        page: 1
+      }
+    });
+  }
+
+  @action
+  previousPage() {
+    const currentPage = parseInt(this.router.currentRoute.queryParams.page || 1, 10);
+    if (currentPage > 1) {
+      this.router.transitionTo({
+        queryParams: { page: currentPage - 1 }
+      });
+    }
+  }
+
+  @action
+  nextPage() {
+    const currentPage = parseInt(this.router.currentRoute.queryParams.page || 1, 10);
+    this.router.transitionTo({
+      queryParams: { page: currentPage + 1 }
+    });
+  }
+
+  performRouteTransition(newParams) {
+    this.router.transitionTo({
+      queryParams: newParams
     });
   }
 
   async model(params) {
     this.searchTermValue = params.searchTerm || "";
     
-    // Matches the route in your plugin.rb: get "/cars" => "car_registry/cars#index"
     const result = await ajax("/cars.json", {
       data: {
         searchTerm: params.searchTerm,
@@ -55,10 +102,17 @@ export default class CarsRoute extends Route {
       cars: result.cars || [],
       meta: result.meta || {},
       filterParams: params,
-      page: params.page || 1,
+      selectedModelId: params.selectedModelId || "0",
+      selectedLocationId: params.selectedLocationId || "0",
+      page: parseInt(params.page || 1, 10),
       totalPages: result.meta?.total_pages || 1,
-      isLastPage: (params.page || 1) >= (result.meta?.total_pages || 1),
-      onSearchInput: this.onSearchInput.bind(this)
+      isLastPage: (parseInt(params.page || 1, 10)) >= (result.meta?.total_pages || 1),
+      onSearchInput: this.onSearchInput.bind(this),
+      onModelChange: this.onModelChange.bind(this),
+      onLocationChange: this.onLocationChange.bind(this),
+      resetFilters: this.resetFilters.bind(this),
+      previousPage: this.previousPage.bind(this),
+      nextPage: this.nextPage.bind(this)
     };
   }
 
@@ -92,7 +146,7 @@ export default class CarsRoute extends Route {
         <select {{on "change" @model.onModelChange}} class="form-control">
           <option value="0">{{i18n "car_registry.filters.all_models"}}</option>
           {{#each @model.meta.models as |carModel|}}
-            <option value={{carModel.id}} selected={{eq @model.selectedModelId carModel.id}}>
+            <option value={{carModel.id}} selected={{eq @model.selectedModelId (toString carModel.id)}}>
               {{carModel.name}}
             </option>
           {{/each}}
@@ -101,7 +155,7 @@ export default class CarsRoute extends Route {
         <select {{on "change" @model.onLocationChange}} class="form-control">
           <option value="0">{{i18n "car_registry.filters.all_locations"}}</option>
           {{#each @model.meta.locations as |loc|}}
-            <option value={{loc.id}} selected={{eq @model.selectedLocationId loc.id}}>
+            <option value={{loc.id}} selected={{eq @model.selectedLocationId (toString loc.id)}}>
               {{loc.name}}
             </option>
           {{/each}}
@@ -187,12 +241,12 @@ export default class CarsRoute extends Route {
         <DButton
           @icon="chevron-left"
           @action={{@model.previousPage}}
-          @disabled={{eq (or @model.page 1) 1}}
+          @disabled={{eq @model.page 1}}
           class="btn-default"
         />
 
         <span class="page-indicator">
-          Page {{or @model.page 1}} of {{@model.totalPages}}
+          Page {{@model.page}} of {{@model.totalPages}}
         </span>
 
         <DButton
