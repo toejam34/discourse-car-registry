@@ -78,10 +78,16 @@ import { eq, or, fn } from "truth-helpers";
           {{#each @model.cars as |car|}}
             <tr>
               <td class="member-col">
-                <a href="/u/{{car.username}}">
-                  {{avatar car imageSize="small"}}
+                {{#if car.avatar_template}}
+                  <a href="/u/{{car.username}}">
+                    {{avatar car imageSize="small"}}
+                    <span>{{car.username}}</span>
+                  </a>
+                {{else if car.username}}
                   <span>{{car.username}}</span>
-                </a>
+                {{else}}
+                  <span>unknown</span>
+                {{/if}}
               </td>
               <td><strong>{{car.model_name}}</strong></td>
               <td>{{car.colour}}</td>
