@@ -1,3 +1,4 @@
+import { on } from "@ember/modifier";
 import DButton from "discourse/components/d-button";
 import avatar from "discourse/helpers/avatar";
 import i18n from "discourse/helpers/i18n";
