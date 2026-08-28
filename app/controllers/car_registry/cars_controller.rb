@@ -3,19 +3,71 @@
 module ::CarRegistry
   class CarsController < ::ApplicationController
     requires_plugin ::CarRegistry::PLUGIN_NAME
+<<<<<<< HEAD
 
     skip_before_action :check_xhr, only: %i[index meta]
     before_action :ensure_logged_in, only: %i[create update destroy]
     before_action :ensure_can_add_car, only: :create
+=======
+    skip_before_action :check_xhr, only: [:index, :meta]
+    before_action :ensure_logged_in, only: [:create, :update, :destroy]
+>>>>>>> 81f8a4b38aae8797e7a8367cbae3cb10838da410
 
     def index
       respond_to do |format|
         format.html { render "default/empty" }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 81f8a4b38aae8797e7a8367cbae3cb10838da410
         format.json do
           entries = ::CarRegistry::CarRegistryEntry.includes(:user, :car_model, :car_location)
 
+<<<<<<< HEAD
           if params[:model_id].present? && params[:model_id].to_i.positive?
             entries = entries.where(model_id: params[:model_id].to_i)
+=======
+            if params[:model_id].present? && params[:model_id] != "0"
+              entries = entries.where(model_id: params[:model_id].to_i)
+            end
+
+            if params[:location_id].present? && params[:location_id] != "0"
+              entries = entries.where(location_id: params[:location_id].to_i)
+            end
+
+            if params[:colour].present?
+              entries = entries.where("LOWER(colour) LIKE ?", "%#{params[:colour].downcase}%")
+            end
+
+            if params[:q].present?
+              query = "%#{params[:q].downcase}%"
+              entries = entries.where(
+                "LOWER(username) LIKE :q OR LOWER(reg_number) LIKE :q OR LOWER(plaque_number) LIKE :q OR LOWER(forum_name) LIKE :q OR LOWER(unique_information) LIKE :q",
+                q: query
+              )
+            end
+
+            total_count = entries.count
+            page = [params[:page].to_i, 1].max
+            per_page = (params[:per_page].presence || 50).to_i.clamp(10, 100)
+            total_pages = (total_count.to_f / per_page).ceil
+            total_pages = 1 if total_pages < 1
+
+            entries = entries.order(updated_at: :desc).offset((page - 1) * per_page).limit(per_page)
+
+            render json: {
+              cars: serialize_data(entries, ::CarRegistry::CarRegistryEntrySerializer),
+              meta: {
+                total: total_count,
+                total_pages: total_pages,
+                page: page,
+                per_page: per_page
+              }
+            }
+          rescue => e
+            Rails.logger.error("CarRegistry Error: #{e.message}\n#{e.backtrace.join("\n")}")
+            render json: { error: e.message }, status: 500
+>>>>>>> 81f8a4b38aae8797e7a8367cbae3cb10838da410
           end
 
           if params[:location_id].present? && params[:location_id].to_i.positive?
