@@ -17,27 +17,30 @@ export default class CarsController extends Controller {
   @tracked selectedLocationId = 0;
 
   get totalPages() {
-    return this.model?.meta?.total_pages || 1;
+    return this.model?.pagination?.total_pages || 1;
   }
 
   get isLastPage() {
-    return this.page >= this.totalPages;
+    const currentPage = parseInt(this.page || 1, 10);
+    return currentPage >= this.totalPages;
   }
 
   @action
   previousPage() {
-    if (this.page > 1) {
+    const currentPage = parseInt(this.page || 1, 10);
+    if (currentPage > 1) {
       this.router.transitionTo("cars", {
-        queryParams: { page: this.page - 1 }
+        queryParams: { page: currentPage - 1 }
       });
     }
   }
 
   @action
   nextPage() {
+    const currentPage = parseInt(this.page || 1, 10);
     if (!this.isLastPage) {
       this.router.transitionTo("cars", {
-        queryParams: { page: this.page + 1 }
+        queryParams: { page: currentPage + 1 }
       });
     }
   }
