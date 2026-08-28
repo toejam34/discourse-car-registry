@@ -112,4 +112,24 @@
       </tbody>
     </table>
   </div>
+
+  <div class="car-registry-pagination">
+    <DButton
+      @icon="chevron-left"
+      @action={{this.previousPage}}
+      @disabled={{eq this.page 1}}
+      class="btn-default"
+    />
+
+    <span class="page-indicator">
+      Page {{this.page}} {{#if this.totalPages}}of {{this.totalPages}}{{/if}}
+    </span>
+
+    <DButton
+      @icon="chevron-right"
+      @action={{this.nextPage}}
+      @disabled={{this.isLastPage}}
+      class="btn-default"
+    />
+  </div>
 </div>
