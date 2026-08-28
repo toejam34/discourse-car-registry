@@ -5,13 +5,13 @@ import { action } from "@ember/object";
 import { debounce } from "@ember/runloop";
 import { on } from "@ember/modifier";
 import { fn } from "@ember/helper";
+import { ajax } from "discourse/lib/ajax";
 import DButton from "discourse/components/d-button";
 import avatar from "discourse/helpers/avatar";
 import i18n from "discourse/helpers/i18n";
 import { eq, or } from "truth-helpers";
 
 export default class CarsRoute extends Route {
-  @service store;
   @service router;
 
   queryParams = {
@@ -40,10 +40,14 @@ export default class CarsRoute extends Route {
 
   async model(params) {
     this.searchTermValue = params.searchTerm || "";
-    const result = await this.store.query("car-registry-item", params);
+    
+    // Fetch data directly from your plugin's Rails endpoint using ajax
+    const result = await ajax("/car-registry/cars.json", {
+      data: params
+    });
     
     return {
-      cars: result,
+      cars: result.cars || [],
       meta: result.meta || {},
       filterParams: params,
       page: params.page || 1,
