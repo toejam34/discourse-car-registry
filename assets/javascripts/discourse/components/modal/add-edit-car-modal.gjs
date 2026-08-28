@@ -6,6 +6,8 @@ import DButton from "discourse/components/d-button";
 import DModal from "discourse/components/d-modal";
 import Input from "@ember/component/input";
 import i18n from "discourse/helpers/i18n";
+import { eq } from "truth-helpers";
+import { ajax } from "discourse/lib/ajax";
 
 export default class AddEditCarModal extends Component {
   @service modal;
@@ -19,6 +21,7 @@ export default class AddEditCarModal extends Component {
   @tracked carRegDate = this.args.model.car?.car_reg_date || "";
   @tracked forumName = this.args.model.car?.forum_name || "";
   @tracked uniqueInformation = this.args.model.car?.unique_information || "";
+  @tracked isSaving = false;
 
   <template>
     <DModal
@@ -78,6 +81,7 @@ export default class AddEditCarModal extends Component {
         <DButton
           @label="save"
           @action={{this.save}}
+          @disabled={{this.isSaving}}
           class="btn-primary"
         />
         <DButton
@@ -91,20 +95,51 @@ export default class AddEditCarModal extends Component {
 
   @action
   updateModelId(e) {
-    this.modelId = e.target.value;
+    this.modelId = parseInt(e.target.value, 10);
   }
 
   @action
   updateLocationId(e) {
-    this.locationId = e.target.value;
+    this.locationId = parseInt(e.target.value, 10);
   }
 
   @action
   async save() {
-    // Save logic
-    this.args.closeModal();
-    if (this.args.model.onSuccess) {
-      this.args.model.onSuccess();
+    this.isSaving = true;
+
+    const payload = {
+      car: {
+        model_id: this.modelId,
+        location_id: this.locationId,
+        colour: this.colour,
+        trim: this.trim,
+        plaque_number: this.plaqueNumber,
+        reg_number: this.regNumber,
+        unique_information: this.uniqueInformation
+      }
+    };
+
+    try {
+      if (this.args.model.car?.id) {
+        await ajax(`/cars/${this.args.model.car.id}.json`, {
+          type: "PUT",
+          data: payload
+        });
+      } else {
+        await ajax("/cars.json", {
+          type: "POST",
+          data: payload
+        });
+      }
+
+      this.args.closeModal();
+      if (this.args.model.onSuccess) {
+        this.args.model.onSuccess();
+      }
+    } catch (error) {
+      // Handle error
+    } finally {
+      this.isSaving = false;
     }
   }
 }
