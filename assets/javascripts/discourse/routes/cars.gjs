@@ -26,12 +26,21 @@ export default class CarsRoute extends Route {
   @action
   onSearchInput(event) {
     this.searchTermValue = event.target.value;
-    debounce(this, this.performRouteTransition, { searchTerm: this.searchTermValue, page: 1 }, 400);
+    debounce(this, this.applySearchFilter, 400);
+  }
+
+  applySearchFilter() {
+    this.router.transitionTo("cars", {
+      queryParams: {
+        searchTerm: this.searchTermValue,
+        page: 1
+      }
+    });
   }
 
   @action
   onModelChange(event) {
-    this.router.transitionTo({
+    this.router.transitionTo("cars", {
       queryParams: {
         selectedModelId: event.target.value,
         page: 1
@@ -41,7 +50,7 @@ export default class CarsRoute extends Route {
 
   @action
   onLocationChange(event) {
-    this.router.transitionTo({
+    this.router.transitionTo("cars", {
       queryParams: {
         selectedLocationId: event.target.value,
         page: 1
@@ -52,11 +61,11 @@ export default class CarsRoute extends Route {
   @action
   resetFilters() {
     this.searchTermValue = "";
-    this.router.transitionTo({
+    this.router.transitionTo("cars", {
       queryParams: {
         searchTerm: "",
-        selectedModelId: null,
-        selectedLocationId: null,
+        selectedModelId: "0",
+        selectedLocationId: "0",
         page: 1
       }
     });
@@ -66,7 +75,7 @@ export default class CarsRoute extends Route {
   previousPage() {
     const currentPage = parseInt(this.router.currentRoute.queryParams.page || 1, 10);
     if (currentPage > 1) {
-      this.router.transitionTo({
+      this.router.transitionTo("cars", {
         queryParams: { page: currentPage - 1 }
       });
     }
@@ -75,14 +84,8 @@ export default class CarsRoute extends Route {
   @action
   nextPage() {
     const currentPage = parseInt(this.router.currentRoute.queryParams.page || 1, 10);
-    this.router.transitionTo({
+    this.router.transitionTo("cars", {
       queryParams: { page: currentPage + 1 }
-    });
-  }
-
-  performRouteTransition(newParams) {
-    this.router.transitionTo({
-      queryParams: newParams
     });
   }
 
