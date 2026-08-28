@@ -3,25 +3,23 @@
 module ::CarRegistry
   class CarsController < ::ApplicationController
     requires_plugin ::CarRegistry::PLUGIN_NAME
-    skip_before_action :check_xhr, only: [:index]
+    skip_before_action :check_xhr, only: [:index, :meta]
     before_action :ensure_logged_in, only: [:create, :update, :destroy]
 
     def index
       respond_to do |format|
-        format.html do
-          render html: "", layout: "application"
-        end
+        format.html { render "default/empty" }
 
         format.json do
           begin
             entries = ::CarRegistry::CarRegistryEntry.includes(:user, :car_model, :car_location)
 
             if params[:model_id].present? && params[:model_id] != "0"
-              entries = entries.where(model_id: params[:model_id].to_i)
+              entries = entries.where(car_model_id: params[:model_id].to_i)
             end
 
             if params[:location_id].present? && params[:location_id] != "0"
-              entries = entries.where(location_id: params[:location_id].to_i)
+              entries = entries.where(car_location_id: params[:location_id].to_i)
             end
 
             if params[:colour].present?
@@ -108,8 +106,8 @@ module ::CarRegistry
 
     def car_params
       params.require(:car).permit(
-        :model_id,
-        :location_id,
+        :car_model_id,
+        :car_location_id,
         :colour,
         :trim,
         :plaque_number,
