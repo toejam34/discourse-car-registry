@@ -5,7 +5,7 @@ module ::CarRegistry
     attributes :id,
                :user_id,
                :username,
-               :user_avatar_template,
+               :avatar_url,
                :model_id,
                :model_name,
                :location_id,
@@ -22,8 +22,11 @@ module ::CarRegistry
                :updated_at,
                :can_edit
 
-    def user_avatar_template
-      object.user&.avatar_template
+    def avatar_url
+      template = object.user&.avatar_template
+      return nil if template.blank?
+
+      template.sub("{size}", "45")
     end
 
     def model_name
@@ -35,13 +38,15 @@ module ::CarRegistry
     end
 
     def car_reg_date_formatted
-      object.car_reg_date&.strftime("%d %b %Y")
+      object.car_reg_date&.strftime("%d/%m/%Y")
     end
 
     def can_edit
       return false unless scope&.user
 
-      scope.user.admin? || object.user_id == scope.user.id
+      scope.user.admin? || (object.user_id.present? && object.user_id == scope.user.id)
     end
   end
 end
+
+CarRegistryEntrySerializer = ::CarRegistry::CarRegistryEntrySerializer unless defined?(CarRegistryEntrySerializer)

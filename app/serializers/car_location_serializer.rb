@@ -5,3 +5,5 @@ module ::CarRegistry
     attributes :id, :name, :position
   end
 end
+
+CarLocationSerializer = ::CarRegistry::CarLocationSerializer unless defined?(CarLocationSerializer)

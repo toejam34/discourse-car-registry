@@ -1,10 +1,20 @@
-# Discourse Car Registry
+# TurboRenault Discourse Car Registry
 
-Car registry plugin for TurboRenault Discourse.
+Native vehicle registry for TurboRenault's Discourse forum.
 
-## Install
+## What it provides
 
-Add the repository to your Discourse `app.yml` plugins section, then rebuild.
+- Public car directory at `/cars`
+- Search by username, registration, plaque/build number, project name and notes
+- Filter by model and location
+- Registered members can add vehicles when `car_registry_allow_all_users_to_add` is enabled
+- Owners and administrators can edit/remove entries
+- Model/location administration APIs under `/admin/car_models` and `/admin/car_locations`
+- Light/dark theme-friendly styling
+
+## Install from GitHub
+
+Add the plugin to the Discourse container's `app.yml` under `hooks.after_code`, or install it through the Discourse plugin configuration used by your deployment:
 
 ```yaml
 hooks:
@@ -15,8 +25,22 @@ hooks:
           - git clone https://github.com/toejam34/discourse-car-registry.git
 ```
 
-The public registry is available at `/cars` and the JSON API at `/cars.json`.
+Rebuild the app container:
 
-## Important
+```bash
+./launcher rebuild app
+```
 
-This plugin intentionally uses a Discourse Ember route map for `/cars` and a Rails JSON endpoint for `/cars.json`.
+Replace `app` with your actual Discourse container name if different.
+
+## API smoke tests
+
+After rebuilding:
+
+```text
+https://turborenault.co.uk/cars.json
+https://turborenault.co.uk/cars/meta.json
+https://turborenault.co.uk/cars
+```
+
+`/cars` is the Ember frontend route; `/cars.json` and `/cars/meta.json` are the JSON endpoints.

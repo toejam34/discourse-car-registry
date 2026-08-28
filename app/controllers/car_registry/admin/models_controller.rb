@@ -1,33 +1,32 @@
 # frozen_string_literal: true
 
-module CarRegistry
+module ::CarRegistry
   module Admin
     class ModelsController < ::Admin::AdminController
       def index
-        render_serialized(CarModel.all, CarModelSerializer)
+        render_serialized(::CarRegistry::CarModel.all, ::CarRegistry::CarModelSerializer)
       end
 
       def create
-        model = CarModel.new(model_params)
+        model = ::CarRegistry::CarModel.new(model_params)
         if model.save
-          render_serialized(model, CarModelSerializer)
+          render_serialized(model, ::CarRegistry::CarModelSerializer)
         else
           render_json_error(model)
         end
       end
 
       def update
-        model = CarModel.find(params[:id])
+        model = ::CarRegistry::CarModel.find(params[:id])
         if model.update(model_params)
-          render_serialized(model, CarModelSerializer)
+          render_serialized(model, ::CarRegistry::CarModelSerializer)
         else
           render_json_error(model)
         end
       end
 
       def destroy
-        model = CarModel.find(params[:id])
-        model.destroy!
+        ::CarRegistry::CarModel.find(params[:id]).destroy!
         render json: success_json
       end
 

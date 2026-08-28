@@ -1,33 +1,32 @@
 # frozen_string_literal: true
 
-module CarRegistry
+module ::CarRegistry
   module Admin
     class LocationsController < ::Admin::AdminController
       def index
-        render_serialized(CarLocation.all, CarLocationSerializer)
+        render_serialized(::CarRegistry::CarLocation.all, ::CarRegistry::CarLocationSerializer)
       end
 
       def create
-        loc = CarLocation.new(location_params)
-        if loc.save
-          render_serialized(loc, CarLocationSerializer)
+        location = ::CarRegistry::CarLocation.new(location_params)
+        if location.save
+          render_serialized(location, ::CarRegistry::CarLocationSerializer)
         else
-          render_json_error(loc)
+          render_json_error(location)
         end
       end
 
       def update
-        loc = CarLocation.find(params[:id])
-        if loc.update(location_params)
-          render_serialized(loc, CarLocationSerializer)
+        location = ::CarRegistry::CarLocation.find(params[:id])
+        if location.update(location_params)
+          render_serialized(location, ::CarRegistry::CarLocationSerializer)
         else
-          render_json_error(loc)
+          render_json_error(location)
         end
       end
 
       def destroy
-        loc = CarLocation.find(params[:id])
-        loc.destroy!
+        ::CarRegistry::CarLocation.find(params[:id]).destroy!
         render json: success_json
       end
 
