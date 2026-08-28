@@ -41,9 +41,14 @@ export default class CarsRoute extends Route {
   async model(params) {
     this.searchTermValue = params.searchTerm || "";
     
-    // Fetch data directly from your plugin's Rails endpoint using ajax
-    const result = await ajax("/car-registry/cars.json", {
-      data: params
+    // Matches the route in your plugin.rb: get "/cars" => "car_registry/cars#index"
+    const result = await ajax("/cars.json", {
+      data: {
+        searchTerm: params.searchTerm,
+        model_id: params.selectedModelId,
+        location_id: params.selectedLocationId,
+        page: params.page || 1
+      }
     });
     
     return {
