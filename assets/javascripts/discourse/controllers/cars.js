@@ -1,70 +1,117 @@
 import Controller from "@ember/controller";
 import { action } from "@ember/object";
-import { tracked } from "@glimmer/tracking";
-import { inject as service } from "@ember/service";
-import showModal from "discourse/lib/show-modal";
+import { debounce } from "@ember/runloop";
+import { service } from "@ember/service";
+
+import AddEditCarModal from "discourse/components/modal/add-edit-car-modal";
 
 export default class CarsController extends Controller {
-  @service currentUser;
   @service router;
+  @service modal;
+  @service currentUser;
 
-  @tracked searchTerm = "";
-  @tracked selectedModelId = 0;
-  @tracked selectedLocationId = 0;
+  queryParams = ["q", "page", "model_id", "location_id"];
+
+  q = "";
+  page = 1;
+  model_id = 0;
+  location_id = 0;
+
+  get models() {
+    return this.model?.meta?.models || [];
+  }
+
+  get locations() {
+    return this.model?.meta?.locations || [];
+  }
+
+  get totalPages() {
+    return this.model?.meta?.total_pages || 1;
+  }
+
+  get isFirstPage() {
+    return Number(this.page) <= 1;
+  }
+
+  get isLastPage() {
+    return Number(this.page) >= this.totalPages;
+  }
+
+  isSelected(value, selected) {
+    return String(value) === String(selected);
+  }
 
   @action
   onSearch(event) {
-    this.searchTerm = event.target.value;
+    this.q = event.target.value;
+    this.page = 1;
+    debounce(this, this.applySearch, 400);
+  }
+
+  applySearch() {
     this.router.transitionTo("cars", {
-      queryParams: { q: this.searchTerm, page: 1 }
+      queryParams: { q: this.q, page: 1 },
     });
   }
 
   @action
   onModelChange(event) {
-    this.selectedModelId = event.target.value;
     this.router.transitionTo("cars", {
-      queryParams: { model_id: this.selectedModelId, page: 1 }
+      queryParams: { model_id: event.target.value, page: 1 },
     });
   }
 
   @action
   onLocationChange(event) {
-    this.selectedLocationId = event.target.value;
     this.router.transitionTo("cars", {
-      queryParams: { location_id: this.selectedLocationId, page: 1 }
+      queryParams: { location_id: event.target.value, page: 1 },
     });
   }
 
   @action
   resetFilters() {
-    this.searchTerm = "";
-    this.selectedModelId = 0;
-    this.selectedLocationId = 0;
     this.router.transitionTo("cars", {
-      queryParams: { q: "", model_id: 0, location_id: 0, page: 1 }
+      queryParams: { q: "", model_id: 0, location_id: 0, page: 1 },
     });
   }
 
   @action
-  openRegisterModal() {
-    showModal("add-edit-car-modal", {
+  previousPage() {
+    if (!this.isFirstPage) {
+      this.router.transitionTo("cars", {
+        queryParams: { page: Number(this.page) - 1 },
+      });
+    }
+  }
+
+  @action
+  nextPage() {
+    if (!this.isLastPage) {
+      this.router.transitionTo("cars", {
+        queryParams: { page: Number(this.page) + 1 },
+      });
+    }
+  }
+
+  @action
+  async openRegisterModal() {
+    await this.modal.show(AddEditCarModal, {
       model: {
-        car: {},
+        car: null,
         meta: this.model.meta,
-        onSuccess: () => this.send("reloadModel")
-      }
+        onSuccess: () => this.router.refresh(),
+      },
     });
   }
 
   @action
-  openEditModal(car) {
-    showModal("add-edit-car-modal", {
+  async openEditModal(car) {
+    await this.modal.show(AddEditCarModal, {
       model: {
-        car: car,
+        car,
         meta: this.model.meta,
-        onSuccess: () => this.send("reloadModel")
-      }
+        onSuccess: () => this.router.refresh(),
+      },
     });
   }
 }

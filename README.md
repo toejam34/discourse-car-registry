@@ -1,16 +1,10 @@
-# Discourse Car Registry Plugin
+# Discourse Car Registry
 
-A native vehicle and car registry directory plugin for Discourse, built specifically for TurboRenault (migrated from XenForo `FS\\UserCarDetails`).
+Car registry plugin for TurboRenault Discourse.
 
-## Features
-- **Public Directory (`/cars`)**: Search and filter by Model, Location, Colour, Registration Plate, Plaque #, and Username.
-- **Member Self-Registration**: Members can register and update their cars.
-- **Light & Dark Theme Native**: Built-in styling adapting to Discourse color variables and themes.
-- **Admin Management**: Manage Car Models and Locations under Discourse Admin.
+## Install
 
-## Installation
-
-Add to your Discourse container `app.yml`:
+Add the repository to your Discourse `app.yml` plugins section, then rebuild.
 
 ```yaml
 hooks:
@@ -18,10 +12,11 @@ hooks:
     - exec:
         cd: $home/plugins
         cmd:
-          - git clone https://github.com/turborenault/discourse-car-registry.git
+          - git clone https://github.com/toejam34/discourse-car-registry.git
 ```
 
-Rebuild Discourse:
-```bash
-./launcher rebuild turborenault
-```
+The public registry is available at `/cars` and the JSON API at `/cars.json`.
+
+## Important
+
+This plugin intentionally uses a Discourse Ember route map for `/cars` and a Rails JSON endpoint for `/cars.json`.
