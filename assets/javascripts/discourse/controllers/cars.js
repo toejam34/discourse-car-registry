@@ -2,11 +2,12 @@ import Controller from "@ember/controller";
 import { action } from "@ember/object";
 import { tracked } from "@glimmer/tracking";
 import { inject as service } from "@ember/service";
-import showModal from "discourse/lib/show-modal";
+import AddEditCarModal from "../components/modal/add-edit-car-modal";
 
 export default class CarsController extends Controller {
   @service currentUser;
   @service router;
+  @service modal;
 
   @tracked searchTerm = "";
   @tracked selectedModelId = 0;
@@ -48,7 +49,7 @@ export default class CarsController extends Controller {
 
   @action
   openRegisterModal() {
-    showModal("add-edit-car-modal", {
+    this.modal.show(AddEditCarModal, {
       model: {
         car: {},
         meta: this.model.meta,
@@ -59,7 +60,7 @@ export default class CarsController extends Controller {
 
   @action
   openEditModal(car) {
-    showModal("add-edit-car-modal", {
+    this.modal.show(AddEditCarModal, {
       model: {
         car: car,
         meta: this.model.meta,
