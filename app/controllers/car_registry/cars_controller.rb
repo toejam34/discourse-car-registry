@@ -39,6 +39,8 @@ module ::CarRegistry
             total_count = entries.count
             page = [params[:page].to_i, 1].max
             per_page = (params[:per_page].presence || 50).to_i.clamp(10, 100)
+            total_pages = (total_count.to_f / per_page).ceil
+            total_pages = 1 if total_pages < 1
 
             entries = entries.order(updated_at: :desc).offset((page - 1) * per_page).limit(per_page)
 
@@ -46,14 +48,13 @@ module ::CarRegistry
               cars: serialize_data(entries, ::CarRegistry::CarRegistryEntrySerializer),
               meta: {
                 total: total_count,
+                total_pages: total_pages,
                 page: page,
                 per_page: per_page
               }
             }
           rescue => e
-            Rails.logger.error("CarRegistry Error: #{e.message}
-#{e.backtrace.join("
-")}")
+            Rails.logger.error("CarRegistry Error: #{e.message}\n#{e.backtrace.join("\n")}")
             render json: { error: e.message }, status: 500
           end
         end
