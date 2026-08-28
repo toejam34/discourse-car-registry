@@ -10,26 +10,6 @@ import avatar from "discourse/helpers/avatar";
 import i18n from "discourse/helpers/i18n";
 import { eq, or } from "truth-helpers";
 
-class CarsComponentController {
-  @tracked searchTerm = "";
-  @service router;
-
-  @action
-  onSearch(event) {
-    this.searchTerm = event.target.value;
-    debounce(this, this.performSearch, 400);
-  }
-
-  performSearch() {
-    this.router.transitionTo({
-      queryParams: {
-        searchTerm: this.searchTerm,
-        page: 1
-      }
-    });
-  }
-}
-
 <template>
   <div class="car-registry-container wrap">
     <div class="car-registry-header">
@@ -52,7 +32,7 @@ class CarsComponentController {
           type="text"
           value={{@model.filterParams.searchTerm}}
           placeholder={{i18n "car_registry.filters.search_placeholder"}}
-          {{on "input" this.onSearch}}
+          {{on "input" @model.onSearchInput}}
           class="form-control"
         />
       </div>
@@ -175,6 +155,7 @@ class CarsComponentController {
 
 export default class CarsRoute extends Route {
   @service store;
+  @service router;
 
   queryParams = {
     searchTerm: { refreshModel: true },
@@ -183,15 +164,35 @@ export default class CarsRoute extends Route {
     page: { refreshModel: true }
   };
 
+  @tracked searchTermValue = "";
+
+  @action
+  onSearchInput(event) {
+    this.searchTermValue = event.target.value;
+    debounce(this, this.performRouteTransition, 400);
+  }
+
+  performRouteTransition() {
+    this.router.transitionTo({
+      queryParams: {
+        searchTerm: this.searchTermValue,
+        page: 1
+      }
+    });
+  }
+
   async model(params) {
+    this.searchTermValue = params.searchTerm || "";
     const result = await this.store.query("car-registry-item", params);
+    
     return {
       cars: result,
       meta: result.meta || {},
       filterParams: params,
       page: params.page || 1,
       totalPages: result.meta?.total_pages || 1,
-      isLastPage: (params.page || 1) >= (result.meta?.total_pages || 1)
+      isLastPage: (params.page || 1) >= (result.meta?.total_pages || 1),
+      onSearchInput: this.onSearchInput.bind(this)
     };
   }
 }
