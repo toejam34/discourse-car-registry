@@ -1,83 +1,62 @@
 <DModal
-  @title={{if this.isEditing (i18n "car_registry.modal.title_edit") (i18n "car_registry.modal.title_new")}}
+  @title={{if @model.car (i18n "car_registry.modal.title_edit") (i18n "car_registry.modal.title_new")}}
   @closeModal={{@closeModal}}
   class="add-edit-car-modal"
 >
   <:body>
-    <div class="control-group">
-      <label>{{i18n "car_registry.modal.model_label"}}</label>
-      <select {{on "change" (fn (mut this.modelId) (get-target-value))}} class="form-control">
-        <option value="0">-- Select Model --</option>
-        {{#each @model.meta.models as |m|}}
-          <option value={{m.id}} selected={{eq this.modelId m.id}}>{{m.name}}</option>
-        {{/each}}
-      </select>
-    </div>
+    <div class="form-horizontal">
+      <div class="control-group">
+        <label>{{i18n "car_registry.modal.model_label"}}</label>
+        <Input @type="text" @value={{this.carModel}} class="input-large" />
+      </div>
 
-    <div class="control-group">
-      <label>{{i18n "car_registry.modal.location_label"}}</label>
-      <select {{on "change" (fn (mut this.locationId) (get-target-value))}} class="form-control">
-        <option value="0">-- Select Location --</option>
-        {{#each @model.meta.locations as |loc|}}
-          <option value={{loc.id}} selected={{eq this.locationId loc.id}}>{{loc.name}}</option>
-        {{/each}}
-      </select>
-    </div>
+      <div class="control-group">
+        <label>{{i18n "car_registry.modal.colour_label"}}</label>
+        <Input @type="text" @value={{this.colour}} class="input-large" />
+      </div>
 
-    <div class="control-group">
-      <label>{{i18n "car_registry.modal.colour_label"}}</label>
-      <Input @value={{this.colour}} class="form-control" placeholder="e.g. Tungsten Grey, Illiad Blue..." />
-    </div>
+      <div class="control-group">
+        <label>{{i18n "car_registry.modal.trim_label"}}</label>
+        <Input @type="text" @value={{this.trim}} class="input-large" />
+      </div>
 
-    <div class="control-group">
-      <label>{{i18n "car_registry.modal.trim_label"}}</label>
-      <Input @value={{this.trim}} class="form-control" placeholder="e.g. Phase 1, Cup, Trophy, Privilege..." />
-    </div>
+      <div class="control-group">
+        <label>{{i18n "car_registry.modal.location_label"}}</label>
+        <Input @type="text" @value={{this.location}} class="input-large" />
+      </div>
 
-    <div class="control-group">
-      <label>{{i18n "car_registry.modal.plaque_label"}}</label>
-      <Input @value={{this.plaqueNumber}} class="form-control" placeholder="e.g. 042" />
-    </div>
+      <div class="control-group">
+        <label>{{i18n "car_registry.modal.plaque_label"}}</label>
+        <Input @type="text" @value={{this.plaqueNumber}} class="input-large" />
+      </div>
 
-    <div class="control-group">
-      <label>{{i18n "car_registry.modal.reg_number_label"}}</label>
-      <Input @value={{this.regNumber}} class="form-control" placeholder="e.g. G23 GTT" />
-    </div>
+      <div class="control-group">
+        <label>{{i18n "car_registry.modal.reg_number_label"}}</label>
+        <Input @type="text" @value={{this.regNumber}} class="input-large" />
+      </div>
 
-    <div class="control-group">
-      <label>{{i18n "car_registry.modal.forum_name_label"}}</label>
-      <Input @value={{this.forumName}} class="form-control" placeholder="e.g. Silver Bullet, Project 5..." />
-    </div>
+      <div class="control-group">
+        <label>{{i18n "car_registry.modal.forum_name_label"}}</label>
+        <Input @type="text" @value={{this.forumName}} class="input-large" />
+      </div>
 
-    <div class="control-group">
-      <label>{{i18n "car_registry.modal.unique_info_label"}}</label>
-      <Textarea @value={{this.uniqueInformation}} class="form-control" rows="3" placeholder="Notable history, engine mods, magazines, restoration details..." />
+      <div class="control-group">
+        <label>{{i18n "car_registry.modal.unique_info_label"}}</label>
+        <Textarea @value={{this.uniqueInfo}} class="input-large" />
+      </div>
     </div>
   </:body>
 
   <:footer>
     <DButton
+      @action={{this.save}}
       @label="car_registry.modal.save_button"
-      @icon="check"
-      @action={{this.saveCar}}
-      @disabled={{this.saving}}
       class="btn-primary"
     />
-
-    {{#if this.isEditing}}
-      <DButton
-        @label="car_registry.modal.delete_button"
-        @icon="trash-alt"
-        @action={{this.deleteCar}}
-        @disabled={{this.saving}}
-        class="btn-danger"
-      />
-    {{/if}}
-
     <DButton
-      @label="cancel"
       @action={{@closeModal}}
-      class="btn-flat"
+      @label="cancel"
+      class="btn-dismiss"
     />
   </:footer>
 </DModal>
