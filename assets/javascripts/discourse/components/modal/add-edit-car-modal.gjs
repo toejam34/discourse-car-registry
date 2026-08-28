@@ -1,4 +1,4 @@
-import { on } from "@ember/modifier";
+import { Input } from "@ember/component";
 import Component from "@glimmer/component";
 import { action } from "@ember/object";
 import { tracked } from "@glimmer/tracking";
