@@ -15,11 +15,11 @@ module ::CarRegistry
             entries = ::CarRegistry::CarRegistryEntry.includes(:user, :car_model, :car_location)
 
             if params[:model_id].present? && params[:model_id] != "0"
-              entries = entries.where(car_model_id: params[:model_id].to_i)
+              entries = entries.where(model_id: params[:model_id].to_i)
             end
 
             if params[:location_id].present? && params[:location_id] != "0"
-              entries = entries.where(car_location_id: params[:location_id].to_i)
+              entries = entries.where(location_id: params[:location_id].to_i)
             end
 
             if params[:colour].present?
@@ -106,8 +106,8 @@ module ::CarRegistry
 
     def car_params
       params.require(:car).permit(
-        :car_model_id,
-        :car_location_id,
+        :model_id,
+        :location_id,
         :colour,
         :trim,
         :plaque_number,
