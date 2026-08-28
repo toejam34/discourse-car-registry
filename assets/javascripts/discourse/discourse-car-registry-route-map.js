@@ -1,3 +1,3 @@
 export default function () {
-  this.route('cars', { path: '/cars' });
+  this.route("cars", { path: "/cars" });
 }
