@@ -1,3 +1,4 @@
+import { on } from "@ember/modifier";
 import { Input } from "@ember/component";
 import Component from "@glimmer/component";
 import { action } from "@ember/object";
@@ -5,7 +6,6 @@ import { tracked } from "@glimmer/tracking";
 import { inject as service } from "@ember/service";
 import DButton from "discourse/components/d-button";
 import DModal from "discourse/components/d-modal";
-import Input from "@ember/component/input";
 import i18n from "discourse/helpers/i18n";
 import { eq } from "truth-helpers";
 import { ajax } from "discourse/lib/ajax";
